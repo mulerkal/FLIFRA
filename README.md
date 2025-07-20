@@ -8,9 +8,10 @@ This repository contains the implementation of **FLIFRA** (Federated Learning wi
 * **Client (`client.py`)**: Implements
 
   * Data loading & non‑IID Dirichlet split of 100 clients
-  * 10% adversarial clients flipping 10% of their labels
-  * Algorithm 1: Isolation Forest anomaly detection and filtering
-  * Local training of a 5‑class CNN model
+  * adversarial clients flipping their labels
+  * adding noise on the client side 
+  * Algorithm 1: iForest anomaly scoring, detection, filtering
+  * Local training of model
 * **Server (`server.py`)**: Implements
 
   * Baselines: FedAvg, Krum, Trimmed‑Mean, DRRA, WeiDetect
@@ -96,7 +97,7 @@ If you use this code, please cite our paper:
 @inproceedings{your2025flifra,
   author    = {{Anley, Mulualem Bitew and Genovese, Angelo, Tesema, Tibebe Beshah and Piuri, Vincenzo}},
   title     = {FLIFRA: Hybrid Data Poisoning Attack Detection
-in Federated Learning for IoT Security},
+In Federated Learning for IoT Security,
   booktitle = {IEEE International Conference on Systems, Man, and Cybernetics (SMC)},
   year      = {2025},
 }
