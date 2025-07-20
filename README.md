@@ -1,4 +1,3 @@
-# FLIFRA
 # FLIFRA: Hybrid Data Poisoning Attack Detection in Federated Learning for IoT Security
 
 This repository contains the implementation of **FLIFRA** (Federated Learning with iForest anomaly filtering and Dynamic Reputation–Based Robust Aggregation) that a dual-layer approach for client and server-side data to pose attack detection in the NIDS model.
@@ -57,6 +56,14 @@ This repository contains the implementation of **FLIFRA** (Federated Learning wi
    * Place the dataset in `data.csv`.
    * Ensure it has a target column named `Label` (string labels).
    * Modify `DATA_PATH` and `LABEL_COLUMN` in both scripts if needed.
+  
+## 🔍 Sensitivity Analysis
+
+We conducted a sensitivity analysis of our dual‑layer poisoning defense by varying the iForest contamination parameter η over the set {0.01, 0.02, 0.05}. For each η, we ran federated learning experiments under consistent poisoning scenarios and recorded:
+
+* **True Positive Rate (TPR)**: fraction of poisoned samples correctly filtered
+* **False Alarm Rate (FAR)**: fraction of benign samples incorrectly filtered
+
 
 ## ⚙️ Configuration
 
