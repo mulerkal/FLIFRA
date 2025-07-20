@@ -94,7 +94,7 @@ If you use this code, please cite our paper:
 
 ```bibtex
 @inproceedings{your2025flifra,
-  author    = {{Anley, Mulualem Bitew and Genovese, Angelo, Tesema, Tibebe Beshaha and Piuri, Vincenzo}},
+  author    = {{Anley, Mulualem Bitew and Genovese, Angelo, Tesema, Tibebe Beshah and Piuri, Vincenzo}},
   title     = {FLIFRA: Hybrid Data Poisoning Attack Detection
 in Federated Learning for IoT Security},
   booktitle = {IEEE International Conference on Systems, Man, and Cybernetics (SMC)},
