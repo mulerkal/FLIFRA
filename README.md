@@ -1,7 +1,7 @@
 # FLIFRA
 # FLIFRA: Hybrid Data Poisoning Attack Detection in Federated Learning for IoT Security
 
-This repository contains the implementation of **FLIFRA** (Federated Learning with iForest anomaly filtering and Dynamic Reputation–Based Robust Aggregation) that a dual-layer approach for client and server-side data to pose attack detection.
+This repository contains the implementation of **FLIFRA** (Federated Learning with iForest anomaly filtering and Dynamic Reputation–Based Robust Aggregation) that a dual-layer approach for client and server-side data to pose attack detection in the NIDS model.
 
 **Key Components:**
 
@@ -10,13 +10,14 @@ This repository contains the implementation of **FLIFRA** (Federated Learning wi
   * Data loading & non‑IID Dirichlet split of 100 clients
   * adversarial clients flipping their labels
   * adding noise on the client side 
-  * Algorithm 1: iForest anomaly scoring, detection, filtering
-  * Local training of model
+  * iForest anomaly scoring, detection, filtering
+  * Local training of the model
+  * uploading to the server
 * **Server (`server.py`)**: Implements
-
+  * flower-federted learning settings 
   * Baselines: FedAvg, Krum, Trimmed‑Mean, DRRA, WeiDetect
-  * Algorithm : DRRA reputation‑weighted aggregation
-  * Algorithm: FLIFRA hybrid (iForest + DRRA)
+  * DRRA reputation‑weighted aggregation
+  * FLIFRA hybrid (iForest + DRRA)
   * Simulation loop over 100 communication rounds
   * Test accuracy
   * Flower federted learning that simulates for 100 different clients 100 clients
@@ -24,11 +25,12 @@ This repository contains the implementation of **FLIFRA** (Federated Learning wi
 
 ## 📋 Features
 
+* **data preprocessing (cic-ids2018, UNSW-NB15 and BOT-IoT datasest)
 * **Non‑IID data** via Dirichlet($\alpha=0.5$) splitting across 100 clients
-* **Poisoning simulation**: 10% of clients adversarially flip 10% of their labels
-* **Anomaly filtering**: Isolation Forest (100 trees, 10% contamination)
+* **Poisoning simulation**: 10%, 20%, 30% and 40% of clients adversarially flip their labels and noise
+* **Anomaly filtering**: iForest (100 trees, n% contamination)
 * **Robust aggregation**: Dynamic Reputation–Based Robust Aggregation (DRRA)
-* **Baselines**: FedAvg, Krum, Trimmed‑Mean for comparative evaluation
+* **Baselines**: FedAvg, Krum, Trimmed‑Mean, DRRA, WeiDetect for comparative evaluation
 ## 🚀 Installation
 
 1. **Clone the repository**:
@@ -84,14 +86,15 @@ All hyperparameters and experiment settings are defined at the top of each scrip
 
 4. **View results**:
 
-   * After simulation, the server will save `cicids_10percent_csf10.eps` with accuracy curves.
+   * After simulation, the server will save `cicids_10percen.eps` with accuracy curves.
    * You can convert or view this EPS in your favorite plotting tool.
 
 ## 📖 Citation
 
 If you use this code, please cite our paper:
 
-> **Your Name**, **Co‑author**, “FLIFRA: Robust Federated Learning with Isolation Forest and Reputation‑Based Aggregation,” *Proceedings of ...*, 2025.
+> **Anley, Mulualem Bitew and Genovese, Angelo, Tesema, Tibebe Beshah and Piuri, Vincenzo, “FLIFRA: Hybrid Data Poisoning Attack Detection
+In Federated Learning for IoT Security, *IEEE SMC conference *, 2025.
 
 ```bibtex
 @inproceedings{your2025flifra,
