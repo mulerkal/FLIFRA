@@ -89,11 +89,11 @@ All hyperparameters and experiment settings are defined at the top of each scrip
    python client.py
    ```
 
-3. **Run multiple clients**: In practice, spawn multiple instances (up to 100) of `python client.py`. Each will simulate one FLIFRAClient.
+3. **Run multiple clients**: In practice, spawn multiple instances (up to 100) of `python client.py`. Each will simulate FLIFRAClient.
 
 4. **View results**:
 
-   * After simulation, the server will save `cicids_10percen.eps` with accuracy curves.
+   * After the simulation, the server will save with accuracy curves.
    * You can convert or view this EPS in your favorite plotting tool.
 
 ## 📖 Citation
@@ -104,16 +104,15 @@ If you use this code, please cite our paper:
 In Federated Learning for IoT Security, *IEEE SMC conference *, 2025.
 
 ```bibtex
-@inproceedings{your2025flifra,
+@inproceedings{anley2025flifra,
   author    = {{Anley, Mulualem Bitew and Genovese, Angelo, Tesema, Tibebe Beshah and Piuri, Vincenzo}},
-  title     = {FLIFRA: Hybrid Data Poisoning Attack Detection
-In Federated Learning for IoT Security,
+  title     = {FLIFRA: Hybrid Data Poisoning Attack Detection In Federated Learning for IoT Security,
   booktitle = {IEEE International Conference on Systems, Man, and Cybernetics (SMC)},
   year      = {2025},
 }
 ```
 
-Access to this codebase is provided under the condition that you acknowledge and cite the above paper in any derivative work.
+Access to this code is provided under the condition that you acknowledge and cite the above paper in any derivative work.
 
 ---
 
