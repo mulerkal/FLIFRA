@@ -1,7 +1,7 @@
 # FLIFRA
-# FLIFRA: Federated Learning with iForest & DRRA
+# FLIFRA: Hybrid Data Poisoning Attack Detection in Federated Learning for IoT Security
 
-This repository contains the implementation of **FLIFRA** (Federated Learning with iForest anomaly filtering and Dynamic Reputation–Based Robust Aggregation) that the dual-layer approach for the client and server side data poses attack detection.
+This repository contains the implementation of **FLIFRA** (Federated Learning with iForest anomaly filtering and Dynamic Reputation–Based Robust Aggregation) that a dual-layer approach for client and server-side data to pose attack detection.
 
 **Key Components:**
 
