@@ -11,7 +11,7 @@ from keras import layers, models
 
 # ─── CONFIG ─────────────────────────────────────────────────────────────────────
 DATA_PATH     = "cicids_2018.csv"
-LABEL_COLUMN  = "attack_label"
+LABEL_COLUMN  = "Label"
 NUM_CLASSES   = 8          # number of label categories
 IF_TREES      = 100        # number of trees
 CONTAM_IF     = 0.10       # contamination η
