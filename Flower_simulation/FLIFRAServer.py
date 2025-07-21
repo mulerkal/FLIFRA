@@ -5,9 +5,9 @@ import matplotlib.pyplot as plt
 import flwr as fl
 
 # ─── CONFIG ─────────────────────────────────────────────────────────────────────
-NUM_CLIENTS       = 100
+NUM_CLIENTS       = 500
 ROUNDS            = 50
-CLIENTS_PER_ROUND = 20
+CLIENTS_PER_ROUND = 100
 SERVER_LR         = 1.0
 REP_DECAY         = 0.9
 REP_THRESHOLD     = 0.5
