@@ -1,88 +1,100 @@
+# Client 
+
 import numpy as np
 import pandas as pd
-import tensorflow as tf
-from tensorflow import keras
-from keras.models import Sequential
-from keras.layers import Conv1D, MaxPooling1D, Flatten, Dense, Dropout, BatchNormalization
+from sklearn.ensemble import IsolationForest
+from sklearn.preprocessing import LabelEncoder, StandardScaler
 from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import StandardScaler
-from sklearn.metrics import classification_report
 import flwr as fl
+import keras
+from keras import layers, models
 
-class FELACSClient(fl.client.NumPyClient):
-    def __init__(self, model, x_train, y_train, x_test, y_test):
-        self.model = model
-        self.x_train, self.y_train = x_train, y_train
-        self.x_test, self.y_test = x_test, y_test
+# ─── CONFIG ─────────────────────────────────────────────────────────────────────
+DATA_PATH     = "cicids_2018.csv"
+LABEL_COLUMN  = "attack_label"
+NUM_CLASSES   = 8          # number of label categories
+IF_TREES      = 100        # number of trees
+CONTAM_IF     = 0.10       # contamination η
+EPOCHS        = 100
+BATCH_SIZE    = 64
 
-    def get_parameters(self, config):
+# ─── DATA LOADING & PREPROCESSING ───────────────────────────────────────────────
+df = pd.read_csv(DATA_PATH)
+df.dropna().drop_duplicates(inplace=True)
+le = LabelEncoder()
+df[LABEL_COLUMN] = le.fit_transform(df[LABEL_COLUMN])
+y = keras.utils.to_categorical(df[LABEL_COLUMN], num_classes=NUM_CLASSES)
+X = df.drop(columns=[LABEL_COLUMN]).values
+X = StandardScaler().fit_transform(X)
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, stratify=df[LABEL_COLUMN], random_state=42
+)
+
+# ─── MODEL FACTORY ───────────────────────────────────────────────────────────────
+def create_model(input_dim, num_classes):
+    model = models.Sequential([
+        layers.Input(shape=(input_dim,)),
+        layers.Dense(64, activation="relu"),
+        layers.Dense(64, activation="relu"),
+        layers.Dense(num_classes, activation="softmax"),
+    ])
+    model.compile(
+        optimizer="adam",
+        loss="categorical_crossentropy",
+        metrics=["accuracy"],
+    )
+    return model
+
+# ─── FLOWER CLIENT ───────────────────────────────────────────────────────────────
+class FLIFRAClient(fl.client.NumPyClient):
+    def __init__(self, cid):
+        self.cid = int(cid)
+
+        # split data 
+        idxs = np.array_split(np.arange(len(X_train)), 10)
+        self.X, self.y = X_train[idxs[self.cid]], y_train[idxs[self.cid]]
+
+        self.model = create_model(X_train.shape[1], NUM_CLASSES)
+
+    def get_parameters(self):
         return self.model.get_weights()
 
     def fit(self, parameters, config):
+        #set global model
         self.model.set_weights(parameters)
-        batch_size = config["batch_size"]
-        epochs = config["local_epochs"]
 
-        history = self.model.fit(self.x_train, self.y_train, batch_size=batch_size, epochs=epochs, validation_split=0.1)
+        # iForest anomaly detection & filtering
+        iso = IsolationForest(
+            n_estimators=IF_TREES,
+            contamination=CONTAM_IF,
+            random_state=42,
+        )
+        iso.fit(self.X)
+        mask = iso.predict(self.X) == 1
+        X_filt, y_filt = self.X[mask], self.y[mask]
 
-        parameters_prime = self.model.get_weights()
-        results = {
-            "loss": history.history["loss"][-1],
-            "accuracy": history.history["accuracy"][-1],
-        }
-        return parameters_prime, len(self.x_train), results
+        # train on filtered data
+        self.model.fit(
+            X_filt,
+            y_filt,
+            epochs=EPOCHS,
+            batch_size=BATCH_SIZE,
+            verbose=0,
+        )
+
+        #return update Δ = M_i − M
+        new_w = self.model.get_weights()
+        delta = [nw - w for nw, w in zip(new_w, parameters)]
+        return delta, len(X_filt), {}
 
     def evaluate(self, parameters, config):
         self.model.set_weights(parameters)
-        y_pred = np.argmax(self.model.predict(self.x_test), axis=1)
-        y_true = np.argmax(self.y_test, axis=1)
+        loss, acc = self.model.evaluate(X_test, y_test, verbose=0)
+        return float(loss), len(X_test), {"accuracy": float(acc)}
 
-        report = classification_report(y_true, y_pred, output_dict=True)
-        
-        metrics = {"accuracy": report["accuracy"]}
-        
-        for i in range(8):  # 8 classes
-            metrics[f"precision_class_{i}"] = report[str(i)]["precision"]
-            metrics[f"recall_class_{i}"] = report[str(i)]["recall"]
-            metrics[f"f1_score_class_{i}"] = report[str(i)]["f1-score"]
-
-        loss, accuracy = self.model.evaluate(self.x_test, self.y_test)
-        return loss, len(self.x_test), metrics
-
-def main() -> None:
-    path = 'cic_ids2018_dataset.csv'
-    data = pd.read_csv(path)
-    X = data.drop(columns=["Label"]).to_numpy()
-    y = pd.get_dummies(data['Label']).to_numpy()
-
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
-
-    model = Sequential([
-        Conv1D(64, 3, activation='relu', input_shape=(X_train.shape[1], 1)),
-        BatchNormalization(),
-        MaxPooling1D(pool_size=2),
-        Conv1D(128, 3, activation='relu'),
-        BatchNormalization(),
-        MaxPooling1D(pool_size=2),
-        Flatten(),
-        Dense(256, activation='relu'),
-        Dropout(0.3),
-        Dense(64, activation='relu'),
-        Dropout(0.3),
-        Dense(8, activation='softmax')
-    ])
-
-    model.compile(
-        loss='categorical_crossentropy',
-        optimizer=tf.keras.optimizers.Adam(learning_rate=0.001),
-        metrics=['accuracy']
-    )
-
-    X_train = X_train.reshape((X_train.shape[0], X_train.shape[1], 1))
-    X_test = X_test.reshape((X_test.shape[0], X_test.shape[1], 1))
-
-    client = FELACSClient(model, X_train, y_train, X_test, y_test)
-    fl.client.start_numpy_client(server_address="127.0.0.1:8080", client=client)
 
 if __name__ == "__main__":
-    main()
+    # Each client will connect to localhost:8080 by default
+    fl.client.start_numpy_client(server_address="localhost:8080", client=FLIFRAClient)
+
+
