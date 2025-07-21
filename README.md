@@ -25,7 +25,7 @@ This repository contains the implementation of **FLIFRA** (Federated Learning wi
 ## 📋 Features
 
 * **data preprocessing (cic-ids2018, UNSW-NB15 and BOT-IoT datasest)
-* **Non‑IID data** via Dirichlet($\alpha=0.5$) splitting across 100 clients
+* **Non‑IID data** via Dirichlet($\alpha=0.5$, $\alpha=0.5$ and $\alpha=0.1$) splitting across 100 clients
 * **Poisoning simulation**: 10%, 20%, 30% and 40% of clients adversarially flip their labels and noise
 * **Anomaly filtering**: iForest (100 trees, n% contamination)
 * **Robust aggregation**: Dynamic Reputation–Based Robust Aggregation (DRRA)
