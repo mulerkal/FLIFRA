@@ -41,7 +41,7 @@ class FELACSClient(fl.client.NumPyClient):
         
         metrics = {"accuracy": report["accuracy"]}
         
-        for i in range(8):  # Assuming 8 classes
+        for i in range(8):  # 8 classes
             metrics[f"precision_class_{i}"] = report[str(i)]["precision"]
             metrics[f"recall_class_{i}"] = report[str(i)]["recall"]
             metrics[f"f1_score_class_{i}"] = report[str(i)]["f1-score"]
@@ -50,7 +50,7 @@ class FELACSClient(fl.client.NumPyClient):
         return loss, len(self.x_test), metrics
 
 def main() -> None:
-    path = 'cic_ids2018_10_percent_dataset.csv'
+    path = 'cic_ids2018_dataset.csv'
     data = pd.read_csv(path)
     X = data.drop(columns=["Label"]).to_numpy()
     y = pd.get_dummies(data['Label']).to_numpy()
