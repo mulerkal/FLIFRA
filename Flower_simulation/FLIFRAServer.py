@@ -50,13 +50,13 @@ class FLIFRAStrategy(fl.server.strategy.Strategy):
     def aggregate_fit(self, rnd, results, failures):
         cids, deltas = zip(*[(int(r.client_id), r.parameters) for r in results])
         wlists = list(deltas)
-        # Alg.2.1 Median reference
+        #  Median reference
         stacked = [np.stack([w[layer] for w in wlists],0) for layer in range(len(wlists[0]))]
         U_med = [np.median(s,0) for s in stacked]
-        # Alg.2.2 Distances
+        #  Distances
         ds = [np.sqrt(sum(np.linalg.norm(wl-um)**2 for wl,um in zip(w, U_med))) for w in wlists]
         D_max = max(max(ds), EPSILON)
-        # Alg.2.3 Scores & reputations
+        # Scores & reputations
         weights=[]
         for cid, d in zip(cids, ds):
             S = max(0, min(1,1 - d/D_max))
@@ -66,11 +66,11 @@ class FLIFRAStrategy(fl.server.strategy.Strategy):
         w = np.array(weights)
         if w.sum()==0: w = np.ones_like(w)
         w /= w.sum()
-        # Alg.2.4 Weighted aggregate
+        # Weighted aggregate
         new_g=[]
         for s in stacked:
             new_g.append(sum(w[i]*s[i] for i in range(len(w))))
-        # Alg.3 Update
+        # Update
         if self.global_w is None:
             self.global_w = new_g
         else:
