@@ -5,7 +5,7 @@ from sklearn.ensemble import IsolationForest
 
 # ─── CONFIG ─────────────────────────────────────────────────────────────────────
 NUM_CLIENTS       = 500
-ROUNDS            = 10
+ROUNDS            = 100
 CLIENTS_PER_ROUND = 100
 REP_DECAY         = 0.9
 REP_THRESHOLD     = 0.5
