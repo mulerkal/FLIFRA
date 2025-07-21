@@ -13,7 +13,7 @@ REP_DECAY         = 0.9
 REP_THRESHOLD     = 0.5
 EPSILON           = 1e-6
 
-# ─── 5) BASELINE AGGREGATORS ────────────────────────────────────────────────────
+#  ────────────────────────────────────────────────────
 def fedavg(weights_list):
     return [np.mean(np.stack(l,0),0) for l in zip(*weights_list)]
 
@@ -35,7 +35,7 @@ def trimmed_mean(weights_list, beta=int(0.10*NUM_CLIENTS)):
         out.append(np.mean(trimmed,0))
     return out
 
-# ─── 6) FLIFRA STRATEGY (Alg. 2+3) ───────────────────────────────────────────────
+# ───  ───────────────────────────────────────────────
 class FLIFRAStrategy(fl.server.strategy.Strategy):
     def __init__(self):
         self.reps = np.ones(NUM_CLIENTS)
@@ -85,7 +85,7 @@ class FLIFRAStrategy(fl.server.strategy.Strategy):
         accs = [r.metrics["accuracy"] for r in results]
         return float(np.mean(accs)), {}
 
-# ─── 7) LAUNCH & COMPARE ────────────────────────────────────────────────────────
+# ───  ────────────────────────────────────────────────────────
 if __name__ == "__main__":
     strategies = {
         "FedAvg": fl.server.strategy.FedAvg(),
